@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Contact - RevTrack</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+    
+    <section class="hero">
+        <h1>Contactez <span class="highlight">RevTrack</span></h1>
+        <p>Une question ? Besoin d’aide ? Contactez-nous dès maintenant !</p>
+    </section>
+
+   
+    <section class="contact">
+        <div class="contact-info">
+            <h2>Nos coordonnées</h2>
+            <p><strong>Email :</strong> support@revtrack.com</p>
+            <p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
+            <p><strong>Adresse :</strong> 123, Avenue des Finances, Paris, France</p>
+        </div>
+
+        <div class="contact-form">
+            <h2>Envoyez-nous un message</h2>
+            <form>
+                <input type="text" name="nom" placeholder="Votre nom" required>
+                <input type="email" name="email" placeholder="Votre email" required>
+                <textarea name="message" rows="5" placeholder="Votre message" required></textarea>
+                <button type="submit" class="btn">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+   
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

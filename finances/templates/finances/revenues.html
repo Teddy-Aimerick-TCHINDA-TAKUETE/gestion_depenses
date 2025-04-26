@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Liste des revenus - RevTrack</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+      
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+    
+    <div class="container">
+        <section class="actions-buttons" style="text-align:center; margin-bottom:20px;">
+            <a href="{% url 'add_expense' %}" class="btn">Ajouter une dépense</a>
+            <a href="{% url 'add_revenue' %}" class="btn">Ajouter un revenu</a>
+            <a href="{% url 'expenses' %}" class="btn">Voir les dépenses</a>
+            <a href="{% url 'revenues' %}" class="btn">Voir les revenus</a>
+        </section>
+    </div>
+    
+    <div class="container">
+        <h2>Liste des revenus</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Montant (€)</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for revenue in revenues %}
+                    <tr>
+                        <td>{{ revenue.title }}</td>
+                        <td>{{ revenue.amount }}</td>
+                        <td>{{ revenue.date }}</td>
+                        <td>{{ revenue.description }}</td>
+                        <td><button onclick="window.location.href='{% url 'edit_revenue' revenue.id %}'" style="color: white;" id="edit_revenue">Modifier</button></td>
+                        <td><button onclick="confirmDelete({{ revenue.id }})" style="color: white;" id="delete_revenue">Supprimer</button></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4">Aucun revenu enregistré.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        title: '{{ message.tags|capfirst }}',
+                        text: '{{ message }}',
+                        icon: '{{ message.tags }}',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+        function confirmDelete(revenueId) {
+            Swal.fire({
+                title: "Voulez-vous vraiment supprimer ce revenue ?",
+                text: "Une fois supprimée, vous ne pourrez plus le récupérer !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/delete_revenue/${revenueId}/`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

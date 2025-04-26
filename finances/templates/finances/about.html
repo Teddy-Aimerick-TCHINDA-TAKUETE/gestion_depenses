@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>À Propos - RevTrack</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+    
+    <section class="hero">
+        <h1>À propos de <span class="highlight">RevTrack</span></h1>
+        <p>Découvrez notre mission, nos valeurs et l’histoire derrière notre application.</p>
+    </section>
+
+    
+    <section class="about">
+        <div class="about-text">
+            <h2>Notre mission</h2>
+            <p>RevTrack a été créé avec un objectif clair : simplifier la gestion financière pour les particuliers et les professionnels.</p>
+            <p>Nous croyons que tout le monde mérite un outil puissant et intuitif pour mieux gérer ses revenus et dépenses.</p>
+        </div>
+        <div class="about-image">
+            <img src="{% static 'images/photo.png' %}" alt="Notre mission">
+        </div>
+    </section>
+
+    
+    <section class="values">
+        <h2>Nos valeurs</h2>
+        <div class="values-container">
+            <div class="value">
+                <img src="{% static 'images/idea.png' %}" alt="Innovation">
+                <h3>Innovation</h3>
+                <p>Nous utilisons les dernières technologies pour offrir une expérience fluide et intuitive.</p>
+            </div>
+            <div class="value">
+                <img src="{% static 'images/securit.png' %}" alt="Sécurité">
+                <h3>Sécurité</h3>
+                <p>Vos données sont protégées grâce à un cryptage avancé et des protocoles de sécurité stricts.</p>
+            </div>
+            <div class="value">
+                <img src="{% static 'images/customer-service.png' %}" alt="Support">
+                <h3>Support client</h3>
+                <p>Nous accompagnons nos utilisateurs avec une assistance dédiée et réactive.</p>
+            </div>
+        </div>
+    </section>
+
+ 
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

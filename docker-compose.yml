@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: gestion_depenses_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    command: bash -c "sleep 15 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: gestion_depenses_db
+      DB_USER: user
+      DB_PASSWORD: password
+
+    develop:  
+      watch:
+        - action: sync
+          path: ./gestion_depenses
+          target: /gestion_depenses/gestion_depenses
+          ignore:
+            - venv/
+            - __pycache__/
+        - action: sync
+          path: ./manage.py
+          target: /gestion_depenses/manage.py
+        - action: rebuild
+          path: requirements.txt
+        - action: rebuild
+          path: Dockerfile
+
+volumes:
+  mysql_data:

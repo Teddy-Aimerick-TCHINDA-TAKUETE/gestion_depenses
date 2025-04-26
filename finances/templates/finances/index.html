@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>RevTrack</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+  
+    <section class="landingPage">
+        <div class="leftSide">
+            <p class="welcome">Bienvenue chez <span class="highlight">RevTrack</span></p>
+            <h1 class="slogan">Gérez vos revenus intelligemment</h1>
+            <p class="description">
+                Suivez vos finances en temps réel, automatisez la gestion de vos revenus et recevez des analyses détaillées.
+            </p>
+            <!-- <div class="searchBar">
+                <input type="text" placeholder="Rechercher...">
+                <button class="btn searchBtn">Go</button>
+            </div> -->
+        </div>
+        <div class="imageContainer">
+            <img src="{% static 'images/central.png' %}" alt="Illustration">
+        </div>
+    </section>
+
+  
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

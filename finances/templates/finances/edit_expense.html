@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Ajouter une dépense - RevTrack</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+      
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="actions-buttons" style="text-align:center; margin-bottom:20px;">
+            <a href="{% url 'add_expense' %}" class="btn">Ajouter une dépense</a>
+            <a href="{% url 'add_revenue' %}" class="btn">Ajouter un revenu</a>
+            <a href="{% url 'expenses' %}" class="btn">Voir les dépenses</a>
+            <a href="{% url 'revenues' %}" class="btn">Voir les revenus</a>
+        </section>
+    </div>
+    
+    <div class="container">
+        <h2>Modifier une dépense</h2>
+        <form method="POST" action="{% url 'edit_expense' expense_id=expense_id %}" id="form-expense">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Titre" required>
+            <input type="number" step="0.01" name="amount" placeholder="Montant (€)" required>
+            <input type="date" name="date" required>
+            <textarea name="description" placeholder="Description"></textarea>
+            <button onclick="confirmEdit({{ expense.id }})" type="button" id="edit_expense">Modifier la dépense</button>
+            <button onclick="window.location.href='{% url 'expenses'  %}'" type="button" id="edit_revenue">Annuler</button>
+            <script>
+                function confirmEdit(revenueId) {
+                    Swal.fire({
+                        title: "Êtes-vous sûr de vouloir modifier cette depense",
+                        text: "Une fois modifier vous ne pourrez pas annuler !",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Oui",
+                        cancelButtonText: "Non",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('form-expense').submit();
+                        }
+                    });
+                }
+            </script>
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        title: '{{ message.tags|capfirst }}',
+                        text: '{{ message }}',
+                        icon: '{{ message.tags }}',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+    document.getElementById('form-expense').addEventListener('button', function(e) {
+        const amount = document.querySelector('[name="amount"]').value;
+        const date = document.querySelector('[name="date"]').value;
+
+        if (amount <= 0 || amount === "") {
+            alert('Le montant doit être supérieur à zéro.');
+            e.preventDefault();
+        }
+
+        if (!date) {
+            alert('Veuillez entrer une date valide.');
+            e.preventDefault();
+        }
+    });
+    </script>
+    
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

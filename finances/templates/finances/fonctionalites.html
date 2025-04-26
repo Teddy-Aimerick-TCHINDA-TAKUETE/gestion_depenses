@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Fonctionnalités - RevTrack</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    
+    <div class="headerContainer">
+        <div class="header">
+            <a href="{% url 'index' %}" class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo">
+                <span class="logo-text">RevTrack</span>
+            </a>
+            <nav class="headerLinks">
+                <a href="{% url 'index' %}">Accueil</a>
+                <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
+                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'contact' %}">Contact</a>
+                {% if user.is_authenticated %}
+                    <button class="btn" id="logout-btn">Se déconnecter</button>
+                {% else %}
+                    <button class="btn" onclick="window.location.href='{% url 'login' %}'">Se connecter</button>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+    
+    <section class="hero">
+        <h1>Découvrez les fonctionnalités de <span class="highlight">RevTrack</span></h1>
+        <p>Gérez vos finances en toute simplicité avec nos outils innovants.</p>
+    </section>
+
+    <div class="container">
+        <section class="actions-buttons" style="text-align:center; margin-bottom:20px;">
+            <a href="{% url 'add_expense' %}" class="btn">Ajouter une dépense</a>
+            <a href="{% url 'add_revenue' %}" class="btn">Ajouter un revenu</a>
+            <a href="{% url 'expenses' %}" class="btn">Voir les dépenses</a>
+            <a href="{% url 'revenues' %}" class="btn">Voir les revenus</a>
+        </section>
+    </div>
+    
+    <section class="features">
+        <div class="feature">
+            <img src="{% static 'images/temps.png' %}" alt="Suivi en temps réel">
+            <h2>Suivi en temps réel</h2>
+            <p>Visualisez vos revenus et dépenses en un coup d'œil avec des graphiques interactifs.</p>
+        </div>
+
+        <div class="feature">
+            <img src="{% static 'images/papier.png' %}" alt="Rapports détaillés">
+            <h2>Rapports détaillés</h2>
+            <p>Générez des rapports précis et analysez vos finances pour une meilleure gestion.</p>
+        </div>
+
+        <div class="feature">
+            <img src="{% static 'images/notification.png' %}" alt="Alertes et notifications">
+            <h2>Alertes et notifications</h2>
+            <p>Recevez des rappels pour ne jamais oublier une transaction ou une échéance.</p>
+        </div>
+
+        <div class="feature">
+            <img src="{% static 'images/mobile.png' %}" alt="Sécurité avancée">
+            <h2>Sécurité avancée</h2>
+            <p>Vos données sont protégées avec un cryptage de niveau bancaire.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
+    </footer>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            Swal.fire({
+                title: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                text: "Vous devrez vous reconnecter pour accéder à nouveau à votre compte.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui",
+                cancelButtonText: "Non",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "{% url 'logout' %}";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
