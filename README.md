@@ -93,6 +93,12 @@ kubectl apply -f service.yml
 
 ---
 
+## 🎥 Démonstration
+
+![Aperçu de l'application](./demo/demo.gif)
+
+---
+
 ## 🖼️ Captures d’écran
 
 > 📌 **À insérer manuellement :**
