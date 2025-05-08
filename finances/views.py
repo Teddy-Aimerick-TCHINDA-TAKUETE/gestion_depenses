@@ -110,7 +110,11 @@ def add_revenue(request):
 def expenses(request):
     mois = request.GET.get('mois')
     annee = request.GET.get('annee')
+    categorie = request.GET.get('categorie')
     expenses = Expense.objects.filter(utilisateur=request.user)
+
+    if categorie:
+        expenses = expenses.filter(categorie=categorie)
 
     if mois:
         try:
@@ -130,7 +134,11 @@ def expenses(request):
 def revenues(request):
     mois = request.GET.get('mois')
     annee = request.GET.get('annee')
+    categorie = request.GET.get('categorie')
     revenues = Revenue.objects.filter(utilisateur=request.user)
+
+    if categorie:
+        revenues = revenues.filter(categorie=categorie)
 
     if mois:
         try:
@@ -189,6 +197,26 @@ def stats_view(request):
 
     expenses = Expense.objects.filter(utilisateur=request.user)
     revenues = Revenue.objects.filter(utilisateur=request.user)
+
+    # Catégories Dépenses
+    depenses_categorie = (
+        expenses.values('categorie')
+        .annotate(total=Sum('amount'))
+        .order_by('categorie')
+    )
+
+    labels_cat_dep = [c['categorie'] for c in depenses_categorie]
+    data_cat_dep = [float(c['total']) for c in depenses_categorie]
+
+    # Catégories Revenus
+    revenus_categorie = (
+        revenues.values('categorie')
+        .annotate(total=Sum('amount'))
+        .order_by('categorie')
+    )
+
+    labels_cat_rev = [c['categorie'] for c in revenus_categorie]
+    data_cat_rev = [float(c['total']) for c in revenus_categorie]
 
     if mois:
         annee_mois, mois_val = mois.split('-')
@@ -250,6 +278,10 @@ def stats_view(request):
         'labels': json.dumps(labels),
         'revenus_par_mois': json.dumps(revenus_par_mois),
         'depenses_par_mois': json.dumps(depenses_par_mois),
+        'labels_cat_dep': json.dumps(labels_cat_dep),
+        'data_cat_dep': json.dumps(data_cat_dep),
+        'labels_cat_rev': json.dumps(labels_cat_rev),
+        'data_cat_rev': json.dumps(data_cat_rev),
     }
 
     return render(request, 'finances/stats.html', context)

@@ -49,10 +49,38 @@
 
         <form method="GET" style="text-align:center; margin-bottom: 20px;">
             <label for="mois">Par mois :</label>
-            <input type="month" name="mois" id="mois" style="width: 200px;">
+            <input type="month" name="mois" value="{{ request.GET.mois }}" id="mois" style="width: 200px;">
             
             <label for="annee" style="margin-left: 20px;">ou par année :</label>
-            <input type="number" name="annee" id="annee" min="2000" max="2100" placeholder="2024" style="width: 80px;">
+            <input type="number" name="annee" value="{{ request.GET.annee }}" id="annee" min="2000" max="2100" placeholder="2024" style="width: 80px;">
+
+            <label for="categorie" style="margin-left: 20px;">Catégorie :</label>
+            <select name="categorie" id="categorie" style="width: 150px;">
+                <option value="">Toutes</option>
+                <option value="Logement" {% if request.GET.categorie == "Logement" %}selected{% endif %}>Logement</option>
+                <option value="Transport" {% if request.GET.categorie == "Transport" %}selected{% endif %}>Transport</option>
+                <option value="Nourriture" {% if request.GET.categorie == "Nourriture" %}selected{% endif %}>Nourriture</option>
+                <option value="Loisirs" {% if request.GET.categorie == "Loisirs" %}selected{% endif %}>Loisirs</option>
+                <option value="Santé" {% if request.GET.categorie == "Santé" %}selected{% endif %}>Santé</option>
+                <option value="Autres" {% if request.GET.categorie == "Autres" %}selected{% endif %}>Autres</option>
+            </select>
+            <style>
+                select[name="categorie"] {
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    background-color: #fff;
+                    font-size: 16px;
+                    font-family: "Poppins", sans-serif;
+                    color: #333;
+                    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+                    transition: border-color 0.2s;
+                }
+
+                select[name="categorie"]:focus {
+                    border-color: #1e90ff;
+                    outline: none;
+                }
+            </style>
             
             <button type="submit" style="width: 80px; margin-left: 20px;">Filtrer</button>
         </form>
@@ -63,6 +91,7 @@
                     <th>Titre</th>
                     <th>Montant (€)</th>
                     <th>Date</th>
+                    <th>Catégorie</th>
                     <th>Description</th>
                 </tr>
             </thead>
@@ -72,6 +101,7 @@
                         <td>{{ expense.title }}</td>
                         <td>{{ expense.amount }}</td>
                         <td>{{ expense.date }}</td>
+                        <td>{{ expense.categorie }}</td>
                         <td>{{ expense.description }}</td>
                         <td><button onclick="window.location.href='{% url 'edit_expense' expense.id %}'" style="color: white;" id="edit_expense">Modifier</button></td>
                         <td><button onclick="confirmDelete({{ expense.id }})" style="color: white;" id="delete_expense">Supprimer</button></td>

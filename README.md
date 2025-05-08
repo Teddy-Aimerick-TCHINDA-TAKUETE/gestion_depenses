@@ -3,9 +3,12 @@
 Ce projet est une application web de gestion de dépenses et revenus développée avec **Django**, **MySQL**, **Docker** et **Kubernetes**. Il permet à un utilisateur de :
 
 - Ajouter, modifier, supprimer des **dépenses** et **revenus**
+- Associer une **catégorie** à chaque revenu ou dépense
+- Filtrer les données par **mois**, **année**, et **catégorie**
 - Voir la **liste des transactions**
-- Visualiser des **statistiques** de ses finances
+- Visualiser des **statistiques dynamiques** : graphiques mensuels, répartition par catégories
 - Gérer son **compte utilisateur** (inscription, connexion, déconnexion)
+- Être averti avec des **confirmations visuelles (SweetAlert)** lors des suppressions
 
 ---
 
@@ -16,6 +19,9 @@ Ce projet est une application web de gestion de dépenses et revenus développé
 - 🐳 **Docker** (virtualisation des services)
 - ☸️ **Kubernetes** (orchestration des conteneurs)
 - 🧰 **Docker Compose** (environnement local simplifié)
+- 📊 **Chart.js** (statistiques dynamiques)
+- 💬 **SweetAlert2** (confirmation visuelle)
+- 🎨 **HTML/CSS personnalisé**
 
 ---
 
@@ -26,14 +32,16 @@ gestion_finances/
 │
 ├── finances/                     # Application Django principale
 │   ├── models.py          # Revenus, Dépenses, Catégories
-│   ├── views.py          # Gestion des utilisateurs
-│   ├── templates/           # Fichiers HTML
+│   ├── views.py           # Logique des vues et filtres
+│   ├── forms.py           # Formulaires Django
+│   ├── static/                      # CSS
+│   ├── templates/         # Fichiers HTML (ajout, édition, stats...)
 │   └── ...
 │
-├── docker-compose.yml       # Déploiement local multi-conteneurs
-├── Dockerfile               # Image de l'application Django
-├── requirements.txt         # Dépendances Python
-├── deployment.yml                     # Fichiers de déploiement Kubernetes
+├── docker-compose.yml           # Déploiement local multi-conteneurs
+├── Dockerfile                   # Image de l'application Django
+├── requirements.txt             # Dépendances Python
+├── deployment.yml               # Fichiers de déploiement Kubernetes
 ├── service.yml
 │
 └── README.md
@@ -82,14 +90,15 @@ kubectl apply -f service.yml
 
 ## 🔐 Fonctionnalités principales
 
-| Fonction                  | Description                          |
-|---------------------------|--------------------------------------|
-| 🔐 Authentification       | Inscription / Connexion              |
-| ➕ Ajouter une dépense     | Formulaire dédié                     |
-| ✏️ Modifier une dépense    | Accessible via un bouton "Modifier"  |
-| ❌ Supprimer une dépense   | Confirmation via boîte de dialogue   |
-| 📊 Statistiques           | Vue récapitulative (revenus/dépenses) |
-| 👤 Mon compte             | Modification des infos utilisateurs  |
+| Fonction                      | Description                                  |
+|-------------------------------|----------------------------------------------|
+| 🔐 Authentification           | Inscription / Connexion                      |
+| ➕ Ajouter une dépense         | Formulaire dédié                             |
+| ✏️ Modifier une dépense        | Champs préremplis                            |
+| ❌ Supprimer une dépense       | Confirmation SweetAlert                      |
+| 📊 Statistiques               | Vue récapitulative dynamique (Chart.js)      |
+| 🗂️ Catégories                  | Pour revenus et dépenses                     |
+| 🔎 Filtres                     | Par mois, année, catégorie                   |
 
 ---
 
@@ -101,12 +110,11 @@ kubectl apply -f service.yml
 
 ## 🖼️ Captures d’écran
 
-> 📌 **À insérer manuellement :**
-
 - Page de connexion ✅
 - Tableau des dépenses ✅
 - Boîte de confirmation suppression (SweetAlert) ✅
-- Dashboard des revenus ✅
+- Dashboard des revenus et dépenses (graphique) ✅
+- Répartition par catégories (camembert) ✅
 - Exemple d’architecture Docker ou Kubernetes ✅
 
 ---
@@ -114,9 +122,9 @@ kubectl apply -f service.yml
 ## ✅ TODO / Améliorations futures
 
 - [ ] Export PDF ou Excel des données
-- [ ] Ajouter la gestion des **catégories**
-- [ ] Ajouter des notifications
+- [ ] Ajouter des notifications par e-mail
 - [ ] Intégrer un front Angular ou React
+- [ ] Ajouter des sous-catégories ou tags
 
 ---
 

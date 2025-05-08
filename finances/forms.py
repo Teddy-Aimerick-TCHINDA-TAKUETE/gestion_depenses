@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
-        fields = ['title', 'amount', 'date', 'description']
+        fields = ['title', 'amount', 'date', 'description', 'categorie']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
@@ -14,7 +14,7 @@ class ExpenseForm(forms.ModelForm):
 class RevenueForm(forms.ModelForm):
     class Meta:
         model = Revenue
-        fields = ['title', 'amount', 'date', 'description']
+        fields = ['title', 'amount', 'date', 'description', 'categorie']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
