@@ -46,10 +46,10 @@
         <h2>Modifier une dépense</h2>
         <form method="POST" action="{% url 'edit_expense' expense_id=expense_id %}" id="form-expense">
             {% csrf_token %}
-            <input type="text" name="title" placeholder="Titre" required>
-            <input type="number" step="0.01" name="amount" placeholder="Montant (€)" required>
-            <input type="date" name="date" required>
-            <textarea name="description" placeholder="Description"></textarea>
+            <input type="text" name="title" placeholder="Titre" value="{{ expense.title }}" required>
+            <input type="number" step="0.01" name="amount" placeholder="Montant (€)" value="{{ expense.amount }}" required>
+            <input type="date" name="date" value="{{ expense.date|date:'Y-m-d' }}" required>
+            <textarea name="description" placeholder="Description">{{ expense.description }}</textarea>
             <button onclick="confirmEdit({{ expense.id }})" type="button" id="edit_expense">Modifier la dépense</button>
             <button onclick="window.location.href='{% url 'expenses'  %}'" type="button" id="edit_revenue">Annuler</button>
             <script>

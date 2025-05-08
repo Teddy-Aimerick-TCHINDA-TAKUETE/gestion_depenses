@@ -133,7 +133,7 @@ def edit_expense(request, expense_id):
             return redirect('expenses')
     else:
         form = ExpenseForm(instance=expense)
-    return render(request, 'finances/edit_expense.html', {'form': form, 'expense_id': expense_id})
+    return render(request, 'finances/edit_expense.html', {'form': form,'expense': expense, 'expense_id': expense_id})
 
 def edit_revenue(request, revenue_id):
     revenue = get_object_or_404(Revenue, id=revenue_id)
@@ -145,4 +145,4 @@ def edit_revenue(request, revenue_id):
             return redirect('revenues')
     else:
         form = RevenueForm(instance=revenue)
-    return render(request, 'finances/edit_revenue.html', {'form': form, 'revenue_id': revenue_id})
+    return render(request, 'finances/edit_revenue.html', {'form': form,'revenue': revenue, 'revenue_id': revenue_id})

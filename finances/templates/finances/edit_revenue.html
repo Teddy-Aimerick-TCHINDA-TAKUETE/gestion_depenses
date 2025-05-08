@@ -46,10 +46,10 @@
         <h2>Modifier un revenu</h2>
         <form method="POST" action="{% url 'edit_revenue' revenue_id=revenue_id %}" id="form-revenue">
             {% csrf_token %}
-            <input type="text" name="title" placeholder="Titre" required>
-            <input type="number" step="0.01" name="amount" placeholder="Montant (€)" required>
-            <input type="date" name="date" required>
-            <textarea name="description" placeholder="Description"></textarea>
+            <input type="text" name="title" placeholder="Titre" value="{{ revenue.title }}" required>
+            <input type="number" step="0.01" name="amount" placeholder="Montant (€)" value="{{ revenue.amount }}" required>
+            <input type="date" name="date" value="{{ revenue.date|date:'Y-m-d' }}" required>
+            <textarea name="description" placeholder="Description">{{ revenue.description }}</textarea>
             <button onclick="confirmEdit({{ revenue.id }})" type="button" id="edit_revenue">Modifier le revenu</button>
             <button onclick="window.location.href='{% url 'revenues'  %}'" type="button" id="edit_revenue">Annuler</button>
             <script>
