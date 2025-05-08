@@ -5,6 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ExpenseForm, RevenueForm, RegisterForm
 from .models import Expense, Revenue
+from django.db.models import Sum
+from datetime import datetime
+from django.db.models.functions import TruncMonth
+import calendar
+import json
 
 def index(request):
     return render(request, 'finances/index.html')
@@ -103,12 +108,42 @@ def add_revenue(request):
 
 @login_required
 def expenses(request):
+    mois = request.GET.get('mois')
+    annee = request.GET.get('annee')
     expenses = Expense.objects.filter(utilisateur=request.user)
+
+    if mois:
+        try:
+            annee, mois = mois.split('-')
+            expenses = expenses.filter(date__year=annee, date__month=mois)
+        except ValueError:
+            messages.error(request, "Format de date invalide.")
+    elif annee:
+        try:
+            expenses = expenses.filter(date__year=annee)
+        except ValueError:
+            messages.error(request, "Année invalide.")
+
     return render(request, 'finances/expenses.html', {'expenses': expenses})
 
 @login_required
 def revenues(request):
+    mois = request.GET.get('mois')
+    annee = request.GET.get('annee')
     revenues = Revenue.objects.filter(utilisateur=request.user)
+
+    if mois:
+        try:
+            annee, mois = mois.split('-')
+            revenues = revenues.filter(date__year=annee, date__month=mois)
+        except ValueError:
+            messages.error(request, "Format de date invalide.")
+    elif annee:
+        try:
+            revenues = revenues.filter(date__year=annee)
+        except ValueError:
+            messages.error(request, "Année invalide.")
+
     return render(request, 'finances/revenues.html', {'revenues': revenues})
 
 def delete_expense(request, expense_id):
@@ -146,3 +181,75 @@ def edit_revenue(request, revenue_id):
     else:
         form = RevenueForm(instance=revenue)
     return render(request, 'finances/edit_revenue.html', {'form': form,'revenue': revenue, 'revenue_id': revenue_id})
+
+@login_required
+def stats_view(request):
+    mois = request.GET.get('mois')
+    annee = request.GET.get('annee')
+
+    expenses = Expense.objects.filter(utilisateur=request.user)
+    revenues = Revenue.objects.filter(utilisateur=request.user)
+
+    if mois:
+        annee_mois, mois_val = mois.split('-')
+        expenses = expenses.filter(date__year=annee_mois, date__month=mois_val)
+        revenues = revenues.filter(date__year=annee_mois, date__month=mois_val)
+
+    elif annee:
+        expenses = expenses.filter(date__year=annee)
+        revenues = revenues.filter(date__year=annee)
+
+    total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_revenue = revenues.aggregate(Sum('amount'))['amount__sum'] or 0
+    balance = total_revenue - total_expense
+
+    # Regrouper par mois
+    monthly_expenses = (
+        Expense.objects.filter(utilisateur=request.user)
+        .annotate(month=TruncMonth('date'))
+        .values('month')
+        .annotate(total=Sum('amount'))
+        .order_by('month')
+    )
+
+    monthly_revenues = (
+        Revenue.objects.filter(utilisateur=request.user)
+        .annotate(month=TruncMonth('date'))
+        .values('month')
+        .annotate(total=Sum('amount'))
+        .order_by('month')
+    )
+
+    # Construire des tableaux de données
+    labels = []
+    revenus_par_mois = []
+    depenses_par_mois = []
+
+    mois_dict = {}
+
+    for item in monthly_revenues:
+        mois_label = item['month'].strftime('%B')
+        mois_dict[mois_label] = {'revenus': item['total'], 'depenses': 0}
+
+    for item in monthly_expenses:
+        mois_label = item['month'].strftime('%B')
+        if mois_label not in mois_dict:
+            mois_dict[mois_label] = {'revenus': 0, 'depenses': item['total']}
+        else:
+            mois_dict[mois_label]['depenses'] = item['total']
+
+    for mois in mois_dict:
+        labels.append(mois)
+        revenus_par_mois.append(float(mois_dict[mois]['revenus']))
+        depenses_par_mois.append(float(mois_dict[mois]['depenses']))
+
+    context = {
+        'total_expense': total_expense,
+        'total_revenue': total_revenue,
+        'balance': balance,
+        'labels': json.dumps(labels),
+        'revenus_par_mois': json.dumps(revenus_par_mois),
+        'depenses_par_mois': json.dumps(depenses_par_mois),
+    }
+
+    return render(request, 'finances/stats.html', context)

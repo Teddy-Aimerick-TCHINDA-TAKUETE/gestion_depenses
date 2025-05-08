@@ -22,7 +22,7 @@
             <nav class="headerLinks">
                 <a href="{% url 'index' %}">Accueil</a>
                 <a href="{% url 'fonctionalites' %}">Fonctionnalités</a>
-                <a href="{% url 'about' %}">À propos</a>
+                <a href="{% url 'about' %}">À&nbsp;propos</a>
                 <a href="{% url 'contact' %}">Contact</a>
                 {% if user.is_authenticated %}
                     <button class="btn" id="logout-btn">Se déconnecter</button>
@@ -33,17 +33,30 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="button-container" style="padding: 20px;">
         <section class="actions-buttons" style="text-align:center; margin-bottom:20px;">
             <a href="{% url 'add_expense' %}" class="btn">Ajouter une dépense</a>
             <a href="{% url 'add_revenue' %}" class="btn">Ajouter un revenu</a>
             <a href="{% url 'expenses' %}" class="btn">Voir les dépenses</a>
             <a href="{% url 'revenues' %}" class="btn">Voir les revenus</a>
+            <a href="{% url 'stats' %}" class="btn">Statistiques</a>
         </section>
     </div>
     
     <div class="container">
+
         <h2>Liste des dépenses</h2>
+
+        <form method="GET" style="text-align:center; margin-bottom: 20px;">
+            <label for="mois">Par mois :</label>
+            <input type="month" name="mois" id="mois" style="width: 200px;">
+            
+            <label for="annee" style="margin-left: 20px;">ou par année :</label>
+            <input type="number" name="annee" id="annee" min="2000" max="2100" placeholder="2024" style="width: 80px;">
+            
+            <button type="submit" style="width: 80px; margin-left: 20px;">Filtrer</button>
+        </form>
+
         <table>
             <thead>
                 <tr>

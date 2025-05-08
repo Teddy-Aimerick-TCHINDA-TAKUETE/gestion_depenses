@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>Liste des revenus - RevTrack</title>
+    <title>Statistiques - RevTrack</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-      
+
     <div class="headerContainer">
         <div class="header">
             <a href="{% url 'index' %}" class="logo">
@@ -32,7 +32,7 @@
             </nav>
         </div>
     </div>
-    
+
     <div class="button-container" style="padding: 20px;">
         <section class="actions-buttons" style="text-align:center; margin-bottom:20px;">
             <a href="{% url 'add_expense' %}" class="btn">Ajouter une dépense</a>
@@ -42,10 +42,10 @@
             <a href="{% url 'stats' %}" class="btn">Statistiques</a>
         </section>
     </div>
-    
+
     <div class="container">
 
-        <h2>Liste des revenus</h2>
+        <h2>Statistiques financières</h2>
 
         <form method="GET" style="text-align:center; margin-bottom: 20px;">
             <label for="mois">Par mois :</label>
@@ -57,43 +57,93 @@
             <button type="submit" style="width: 80px; margin-left: 20px;">Filtrer</button>
         </form>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Montant (€)</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for revenue in revenues %}
-                    <tr>
-                        <td>{{ revenue.title }}</td>
-                        <td>{{ revenue.amount }}</td>
-                        <td>{{ revenue.date }}</td>
-                        <td>{{ revenue.description }}</td>
-                        <td><button onclick="window.location.href='{% url 'edit_revenue' revenue.id %}'" style="color: white;" id="edit_revenue">Modifier</button></td>
-                        <td><button onclick="confirmDelete({{ revenue.id }})" style="color: white;" id="delete_revenue">Supprimer</button></td>
-                    </tr>
-                {% empty %}
-                    <tr><td colspan="4">Aucun revenu enregistré.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% if messages %}
-            {% for message in messages %}
-                <script>
-                    Swal.fire({
-                        title: '{{ message.tags|capfirst }}',
-                        text: '{{ message }}',
-                        icon: '{{ message.tags }}',
-                        confirmButtonText: 'OK'
-                    });
-                </script>
-            {% endfor %}
-        {% endif %}
+        <div class="stats-box">
+            <p><strong>Total Revenus :</strong> {{ total_revenue }} €</p>
+            <p><strong>Total Dépenses :</strong> {{ total_expense }} €</p>
+            <p><strong>Solde :</strong> {{ balance }} €</p>
+        </div>
+
+        <h3 style="text-align: center; margin-top: 40px;">Budget global : répartition revenus / dépenses</h3>
+        <div id="chart-container" style="max-width: 500px; margin: 0 auto;">
+            <canvas id="chart" style="width: 100%; height: auto;"></canvas>
+        </div>
+        <h3 style="text-align: center; margin-top: 40px;">Évolution mensuelle des revenus et dépenses</h3>
+        <canvas id="courbeMensuelle"></canvas>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('chart');
+        const myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Revenus', 'Dépenses'],
+                datasets: [{
+                    label: 'Répartition',
+                    data: [{{ total_revenue }}, {{ total_expense }}],
+                    backgroundColor: ['#4CAF50', '#FF5733'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Budget global : répartition revenus / dépenses',
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 30
+                        }
+                    }
+                }
+            }
+        });
+        const ctx1 = document.getElementById('courbeMensuelle').getContext('2d');
+        const chart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [
+                    {
+                        label: 'Revenus',
+                        data: {{ revenus_par_mois|safe }},
+                        borderColor: 'green',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Dépenses',
+                        data: {{ depenses_par_mois|safe }},
+                        borderColor: 'red',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Évolution mensuelle des revenus et dépenses',
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 30
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
     <footer class="footer">
         <p>Copyright &copy; 2025 RevTrack. Tous droits réservés.</p>
@@ -113,20 +163,5 @@
                 }
             });
         });
-        function confirmDelete(revenueId) {
-            Swal.fire({
-                title: "Voulez-vous vraiment supprimer ce revenue ?",
-                text: "Une fois supprimée, vous ne pourrez plus le récupérer !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Oui",
-                cancelButtonText: "Non"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `/delete_revenue/${revenueId}/`;
-                }
-            });
-        }
     </script>
 </body>
-</html>
