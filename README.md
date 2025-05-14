@@ -10,6 +10,10 @@ Ce projet est une application web de gestion de dépenses et revenus développé
 - Gérer son **compte utilisateur** (inscription, connexion, déconnexion)
 - Être averti avec des **confirmations visuelles (SweetAlert)** lors des suppressions
 
+Aperçu de l'application : 
+
+![Aperçu de l'application](./demo/demo.gif)
+
 ---
 
 ## 🔧 Technologies utilisées
@@ -86,6 +90,10 @@ kubectl apply -f deployment.yml
 kubectl apply -f service.yml
 ```
 
+Aperçu du dashboard kubernetes : 
+
+![Aperçu du dashboard kubernetes](./demo/demo-kubernetes-dashboard.gif)
+
 ---
 
 ## 🔐 Fonctionnalités principales
@@ -104,18 +112,13 @@ kubectl apply -f service.yml
 
 ## 🎥 Démonstration
 
+Aperçu de l'application : 
+
 ![Aperçu de l'application](./demo/demo.gif)
 
----
+Aperçu des focntionnalités de l'application : 
 
-## 🖼️ Captures d’écran
-
-- Page de connexion ✅
-- Tableau des dépenses ✅
-- Boîte de confirmation suppression (SweetAlert) ✅
-- Dashboard des revenus et dépenses (graphique) ✅
-- Répartition par catégories (camembert) ✅
-- Exemple d’architecture Docker ou Kubernetes ✅
+![Aperçu des focntionnalités de l'application](./demo/demo-fonctionnalite.gif)
 
 ---
 
